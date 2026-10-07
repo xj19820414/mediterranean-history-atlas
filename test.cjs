@@ -50,6 +50,8 @@ async function browserTests() {
     assert.match(await page.locator("#yearLabel").innerText(),/1000/);
     assert.equal(await page.locator(".polity-card").count(),7);
     assert(await page.locator("#mapLand path").count() > 0,"Map must be rendered");
+    assert(await page.locator("#mapBoundaries path").count() > 0,"Historical boundaries must be rendered");
+    const earlyBorders = await page.locator("#mapBoundaries").innerHTML();
     const jump = async (era,year) => {
       await page.locator("#yearEra").selectOption(era);
       await page.locator("#yearInput").fill(String(year));
@@ -58,6 +60,14 @@ async function browserTests() {
     await jump("bce",50);
     assert.match(await page.locator("#detailBody").innerText(),/克娄巴特拉/);
     await jump("ce",100);
+    assert.equal(await page.locator("#mapBoundaries").getAttribute("data-snapshot"),"100");
+    assert.notEqual(await page.locator("#mapBoundaries").innerHTML(),earlyBorders,"Boundaries must change");
+    await page.locator("#compareBoundaries").check();
+    assert(await page.locator("#previousBoundaries path").count() > 0,"Previous snapshot comparison must render");
+    await page.locator("#compareBoundaries").uncheck();
+    assert.equal(await page.locator("#previousBoundaries path").count(),0);
+    assert(await page.locator("#boundaryKey span").count() > 0,"Polity legend must render");
+    await page.locator("#mapStage").screenshot({path:"test-results/roman-boundaries.png"});
     assert.match(await page.locator(".polity-card[data-region=italy]").innerText(),/图拉真/);
     await page.locator(".region-pin[data-region=italy]").click();
     assert.match(await page.locator("#detailBody").innerText(),/图拉真/);
@@ -66,11 +76,23 @@ async function browserTests() {
     await page.locator("#yearSlider").press("ArrowRight");
     assert.equal(await page.locator("#yearLabel").innerText(),"公元 1 年");
     await jump("ce",1204);
+    assert.equal(await page.locator("#mapBoundaries").getAttribute("data-snapshot"),"1200");
+    await page.getByRole("button",{name:"下一个边界快照",exact:true}).click();
+    assert.equal(await page.locator("#mapBoundaries").getAttribute("data-snapshot"),"1279");
+    await jump("ce",1204);
     assert.match(await page.locator("#eventsList").innerText(),/十字军/);
     await page.getByRole("button",{name:"播放时间轴",exact:true}).click();
     await page.waitForTimeout(350);
     assert(Number(await page.locator("#yearSlider").inputValue()) > 1204);
     await page.getByRole("button",{name:"暂停时间轴",exact:true}).click();
+    await jump("ce",1453);
+    assert.equal(await page.locator("#mapBoundaries").getAttribute("data-snapshot"),"1400");
+    await page.locator("#mapStage").screenshot({path:"test-results/medieval-boundaries.png"});
+    await page.locator("#snapshotSelect").selectOption("-500");
+    assert.equal(await page.locator("#mapBoundaries").getAttribute("data-snapshot"),"-500");
+    await page.locator("#showRegions").uncheck();
+    assert.equal(await page.locator("#mapPins").isVisible(),false);
+    await page.locator("#showRegions").check();
     await jump("ce",1453);
     assert.match(await page.locator("#eventsList").innerText(),/君士坦丁堡陷落/);
     assert(await page.locator("#timelineScroller").evaluate((el)=>el.scrollLeft > 0));

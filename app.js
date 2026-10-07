@@ -12,6 +12,16 @@ const inRange = (year, start, end) => year >= start && year <= end;
 const periodFor = (region, year) => region.periods.find(([start, end]) => inRange(year, start, end));
 const position = (year) => ((yearToIndex(year) - minIndex) / (maxIndex - minIndex)) * 100;
 const sourceLink = (page, label = "参考条目") => `<a href="https://en.wikipedia.org/wiki/${encodeURIComponent(page)}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
+const boundaryStageFor = (year) => [...window.ATLAS_BOUNDARIES].reverse().find((stage) => stage.year <= year) || window.ATLAS_BOUNDARIES[0];
+const escapeText = (value) => String(value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+const boundaryColor = (subject) => {
+  const hash = [...subject].reduce((value,char)=>(value*31+char.charCodeAt(0))>>>0,0);
+  return `hsl(${hash%360} 42% 60%)`;
+};
+const geometryPath = (feature) => {
+  const polygons = feature.geometry.type === "Polygon" ? [feature.geometry.coordinates] : feature.geometry.coordinates;
+  return polygons.map((polygon)=>polygon.map((ring)=>ring.map((point,i)=>`${i?"L":"M"}${project(point).map((v)=>v.toFixed(2)).join(",")}`).join("")+"Z").join("")).join("");
+};
 
 function render(year, follow = true) {
   const active = data.regions.filter((region) => periodFor(region, year));
@@ -24,6 +34,7 @@ function render(year, follow = true) {
   $("sliderProgress").style.width = `${position(year)}%`;
   $("activeCount").textContent = active.length;
   $("eventCount").textContent = nearby.length;
+  renderBoundaries(year);
   $("polityGrid").innerHTML = active.map((region) => {
     const period = periodFor(region, year);
     const rulers = data.rulers.filter(([id,start,end]) => id === region.id && inRange(year,start,end));
@@ -48,6 +59,53 @@ function render(year, follow = true) {
     scroller.scrollLeft = Math.max(0, x - scroller.clientWidth / 2);
   }
 }
+
+function renderBoundaries(year) {
+  const stage = boundaryStageFor(year);
+  $("boundaryLabel").textContent = `边界快照：${formatYear(stage.year)} · 历史重建`;
+  $("mapBoundaries").dataset.snapshot = stage.year;
+  $("mapBoundaries").replaceChildren();
+  const names = new Set();
+  $("snapshotSelect").value = stage.year;
+  const stageIndex = window.ATLAS_BOUNDARIES.indexOf(stage);
+  $("previousBoundary").disabled = stageIndex === 0;
+  $("nextBoundary").disabled = stageIndex === window.ATLAS_BOUNDARIES.length - 1;
+  for (const feature of stage.features) {
+    const name = feature.properties.NAME;
+    const subject = feature.properties.SUBJECTO || name;
+    names.add(subject);
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d",geometryPath(feature));
+    path.setAttribute("fill",boundaryColor(subject));
+    path.setAttribute("class","historical-boundary");
+    path.setAttribute("tabindex","0");
+    path.setAttribute("role","button");
+    path.setAttribute("aria-label",`${name} · ${subject}`);
+    const title = document.createElementNS("http://www.w3.org/2000/svg","title");
+    title.textContent = `${name} · ${subject} · ${formatYear(stage.year)}`;
+    path.appendChild(title);
+    const show = ()=>{
+      $("boundarySelection").textContent = `${name} · ${subject} · ${formatYear(stage.year)} 快照`;
+      for(const item of $("mapBoundaries").children) item.classList.toggle("chosen",item===path);
+    };
+    path.addEventListener("click",show);
+    path.addEventListener("keydown",(event)=>{if(event.key==="Enter" || event.key===" "){event.preventDefault();show();}});
+    $("mapBoundaries").appendChild(path);
+  }
+  $("boundaryKey").innerHTML = [...names].sort().map((name)=>`<span><i style="background:${boundaryColor(name)}"></i>${escapeText(name)}</span>`).join("");
+  $("previousBoundaries").replaceChildren();
+  const previous = window.ATLAS_BOUNDARIES[stageIndex - 1];
+  if ($("compareBoundaries").checked && previous) {
+    for (const feature of previous.features) {
+      const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+      path.setAttribute("d",geometryPath(feature));
+      $("previousBoundaries").appendChild(path);
+    }
+    $("boundaryLabel").textContent += ` · 虚线对照 ${formatYear(previous.year)}`;
+  }
+  $("boundarySelection").textContent = `当前快照收录 ${names.size} 个政权 / 文化区域（包含地图外延）`;
+}
+
 
 function renderDetail(year) {
   const region = data.regions.find((r) => r.id === selected);
@@ -132,4 +190,17 @@ $("mapPins").innerHTML = data.regions.map((region) => {
   const [x,y] = project(region.point);
   return `<button class="region-pin" data-region="${region.id}" style="left:${x / 760 * 100}%;top:${y / 430 * 100}%;--region-color:${region.color}" aria-label="查看${region.name}">${region.name}</button>`;
 }).join("");
+$("showRegions").addEventListener("change",()=>{$("mapPins").hidden = !$("showRegions").checked;});
+$("compareBoundaries").addEventListener("change",()=>renderBoundaries(indexToYear(Number(slider.value))));
+$("snapshotSelect").innerHTML = window.ATLAS_BOUNDARIES.map((stage)=>`<option value="${stage.year}">${formatYear(stage.year)}</option>`).join("");
+$("snapshotSelect").addEventListener("change",()=>{stopPlayback();setYear(Number($("snapshotSelect").value));});
+for (const [id,direction] of [["previousBoundary",-1],["nextBoundary",1]]) {
+  $(id).addEventListener("click",()=>{
+    stopPlayback();
+    const current = boundaryStageFor(indexToYear(Number(slider.value)));
+    const index = window.ATLAS_BOUNDARIES.indexOf(current);
+    const next = window.ATLAS_BOUNDARIES[Math.max(0,Math.min(window.ATLAS_BOUNDARIES.length-1,index+direction))];
+    setYear(next.year);
+  });
+}
 setYear(-1000);

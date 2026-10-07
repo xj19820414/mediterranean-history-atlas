@@ -7,6 +7,7 @@
     <title>地中海国家演变 · Mediterranean Atlas</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="workspace.css" />
+    <link rel="stylesheet" href="boundaries.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -80,6 +81,8 @@
               <div class="sea-glow"></div>
               <svg id="baseMap" viewBox="0 0 760 430" preserveAspectRatio="none" role="img" aria-label="地中海自然海岸线地图">
                 <g id="mapLand"></g>
+                <g id="mapBoundaries" aria-label="历史势力范围"></g>
+                <g id="previousBoundaries" aria-label="上一快照边界对照" pointer-events="none"></g>
                 <g class="legacy-map" style="display:none">
                 <path class="land land-west" d="M34 72 C94 44 123 54 157 77 C190 97 214 114 242 141 L252 197 C211 206 176 194 143 171 C114 150 83 143 57 119 C42 105 28 91 34 72Z"/>
                 <path class="land land-north" d="M229 42 C294 22 353 33 403 57 C439 74 484 81 527 73 C575 64 612 81 646 111 L632 150 C575 145 529 151 487 158 C432 168 385 159 337 150 C298 142 254 130 224 105Z"/>
@@ -97,8 +100,11 @@
                 </g>
               </svg>
               <div id="mapPins"></div>
-              <div class="map-legend">地区定位示意 · 非历史疆界 · Natural Earth</div>
+              <div class="map-legend"><span id="boundaryLabel">历史势力范围 · 示意边界</span><span class="map-legend-note">现代海岸线 · Natural Earth</span></div>
             </div>
+            <div class="boundary-tools"><button id="previousBoundary" aria-label="上一个边界快照">← 上一快照</button><button id="nextBoundary" aria-label="下一个边界快照">下一快照 →</button><select id="snapshotSelect" aria-label="边界快照年份"></select><label><input id="showRegions" type="checkbox" checked /> 地区标记</label><label><input id="compareBoundaries" type="checkbox" /> 对照上一快照</label></div>
+            <div id="boundaryKey" class="boundary-key"></div>
+            <div class="boundary-meta"><p id="boundarySelection"></p><p>边界来自 <a href="https://github.com/aourednik/historical-basemaps" target="_blank" rel="noopener noreferrer">Historical Basemaps</a>（GPL-3.0）；古代边界与文化区域存在不确定性。所选年使用此前最近快照，非逐年精确疆界。</p></div>
           </div>
           <aside class="detail-card">
             <div class="card-head"><div><p class="section-label">阶段注记 / PERIOD NOTE</p><h3 id="periodTitle">铁器时代的海上网络</h3></div><span class="period-index" id="periodIndex">01</span></div>
@@ -121,6 +127,7 @@
     </div>
     <script src="history.js"></script>
     <script src="land.js"></script>
+    <script src="boundaries.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

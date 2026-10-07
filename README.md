@@ -34,4 +34,13 @@
 - [visjs/vis-timeline](https://github.com/visjs/vis-timeline)：可缩放、可滚动时间轴
 - [aourednik/historical-basemaps](https://github.com/aourednik/historical-basemaps)：历史地图数据组织方式
 
-本项目没有复制这些项目的代码；当前实现保持原生 HTML / CSS / JavaScript，便于本地离线维护。Natural Earth 底图数据仅作为现代地理海岸线示意，不代表历史疆界。
+本项目没有复制这些项目的程序代码；当前实现保持原生 HTML / CSS / JavaScript，便于本地离线维护。Natural Earth 底图数据仅作为现代地理海岸线示意。
+
+## 历史边界数据
+
+已接入 Historical Basemaps 的 24 个 GeoJSON 快照（前 1000 年至 1400 年），原始文件位于 `boundaries/`，许可证见 `boundaries/LICENSE`（GPL-3.0）。
+下载日期：2026-10-07。`prepare-boundaries.cjs` 仅筛选与地中海视野相交的要素，并生成离线 `boundaries.js`；未修改原始坐标。
+
+地图显示所选年份之前最近的快照，快照之间不插值、不声称逐年精确边界。1453 年目前沿用 1400 年快照，页面会标注。原项目声明数据仍在完善，学术使用必须另行复核；古代文化区域、附属关系和重叠区域不等于现代国界。
+
+边界层支持快照选择、前后跳转、点击 / 键盘选择政权、颜色图例，以及上一快照虚线对照。中文地区档案按所选年份更新；边界及其政权名称按页面标出的快照年份更新，两者时间粒度不同。

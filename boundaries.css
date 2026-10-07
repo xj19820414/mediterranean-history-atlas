@@ -1,0 +1,15 @@
+.historical-boundary{fill-opacity:.72;stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke;cursor:pointer}
+.historical-boundary:hover,.historical-boundary.chosen,.historical-boundary:focus{fill-opacity:.95;stroke:#273b35;stroke-width:2;outline:none}
+.map-legend{display:block;max-width:calc(100% - 20px);pointer-events:none}
+.map-legend-note{display:block;margin-top:3px;font-size:9px}
+.boundary-meta{font-size:11px;color:#526c61;line-height:1.7;margin-top:12px}
+.boundary-meta p{margin:5px 0}
+.boundary-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:11px}
+.boundary-tools button{padding:6px 10px;border:1px solid #b3c6bf;background:#fff;cursor:pointer;color:#295b4c}
+.sea-glow{display:none}
+.boundary-key{display:flex;flex-wrap:wrap;gap:8px 14px;max-height:130px;overflow:auto;margin-top:14px;padding:10px 0;border-top:1px solid #d3ddda;border-bottom:1px solid #d3ddda}
+.boundary-key span{display:flex;align-items:center;gap:5px;font-size:10px;color:#3b574b}
+.boundary-key i{width:10px;height:10px;flex-shrink:0;border-radius:2px}
+.boundary-tools select{padding:5px;background:white;border:1px solid #b3c6bf;color:#295b4c;max-width:150px}
+.boundary-tools button:disabled{opacity:.4;cursor:default}
+#previousBoundaries path{fill:none;stroke:#2e3730;stroke-width:1.5;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;opacity:.8}
