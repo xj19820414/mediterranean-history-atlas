@@ -3,6 +3,9 @@ const $ = (id) => document.getElementById(id);
 const slider = $("yearSlider");
 let timer = null;
 let selected = "egypt";
+let boundaryRenderKey = "";
+let chosenSubject = "";
+const boundaryNames = new Set();
 const minIndex = -999;
 const maxIndex = 1453;
 const yearToIndex = (year) => year < 0 ? year + 1 : year;
@@ -14,6 +17,18 @@ const position = (year) => ((yearToIndex(year) - minIndex) / (maxIndex - minInde
 const sourceLink = (page, label = "参考条目") => `<a href="https://en.wikipedia.org/wiki/${encodeURIComponent(page)}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
 const boundaryStageFor = (year) => [...window.ATLAS_BOUNDARIES].reverse().find((stage) => stage.year <= year) || window.ATLAS_BOUNDARIES[0];
 const escapeText = (value) => String(value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+const polityLabels = {
+  "Egypt":"埃及", "Roman Empire":"罗马帝国", "Roman Republic":"罗马共和国",
+  "Western Roman Empire":"西罗马帝国", "Eastern Roman Empire":"东罗马帝国",
+  "Byzantine Empire":"拜占庭帝国", "Ottoman Empire":"奥斯曼帝国",
+  "Carthaginian Empire":"迦太基势力", "Carthage":"迦太基",
+  "Ptolemaic Kingdom":"托勒密王国", "Seleucid Kingdom":"塞琉古王国",
+  "Achaemenid Empire":"阿契美尼德帝国", "Mamluke Sultanate":"马穆鲁克苏丹国",
+  "Fatimid Caliphate":"法蒂玛哈里发国", "Venice":"威尼斯",
+  "Macedon and Hellenic League":"马其顿与希腊联盟", "France":"法国",
+  "Holy Roman Empire":"神圣罗马帝国"
+};
+const polityLabel = (name) => polityLabels[name] ? `${polityLabels[name]} · ${name}` : name;
 const boundaryColor = (subject) => {
   const hash = [...subject].reduce((value,char)=>(value*31+char.charCodeAt(0))>>>0,0);
   return `hsl(${hash%360} 42% 60%)`;
@@ -62,10 +77,13 @@ function render(year, follow = true) {
 
 function renderBoundaries(year) {
   const stage = boundaryStageFor(year);
+  const key = `${stage.year}:${$("compareBoundaries").checked}`;
+  if (key === boundaryRenderKey) { selectBoundary(chosenSubject); return; }
+  boundaryRenderKey = key;
   $("boundaryLabel").textContent = `边界快照：${formatYear(stage.year)} · 历史重建`;
   $("mapBoundaries").dataset.snapshot = stage.year;
   $("mapBoundaries").replaceChildren();
-  const names = new Set();
+  boundaryNames.clear();
   $("snapshotSelect").value = stage.year;
   const stageIndex = window.ATLAS_BOUNDARIES.indexOf(stage);
   $("previousBoundary").disabled = stageIndex === 0;
@@ -73,26 +91,26 @@ function renderBoundaries(year) {
   for (const feature of stage.features) {
     const name = feature.properties.NAME;
     const subject = feature.properties.SUBJECTO || name;
-    names.add(subject);
+    boundaryNames.add(subject);
     const path = document.createElementNS("http://www.w3.org/2000/svg","path");
     path.setAttribute("d",geometryPath(feature));
     path.setAttribute("fill",boundaryColor(subject));
     path.setAttribute("class","historical-boundary");
+    path.dataset.subject = subject;
     path.setAttribute("tabindex","0");
     path.setAttribute("role","button");
-    path.setAttribute("aria-label",`${name} · ${subject}`);
+    path.setAttribute("aria-label",`${polityLabel(name)} · ${polityLabel(subject)}`);
     const title = document.createElementNS("http://www.w3.org/2000/svg","title");
-    title.textContent = `${name} · ${subject} · ${formatYear(stage.year)}`;
+    title.textContent = `${polityLabel(name)} · ${polityLabel(subject)} · ${formatYear(stage.year)}`;
     path.appendChild(title);
     const show = ()=>{
-      $("boundarySelection").textContent = `${name} · ${subject} · ${formatYear(stage.year)} 快照`;
-      for(const item of $("mapBoundaries").children) item.classList.toggle("chosen",item===path);
+      selectBoundary(subject);
     };
     path.addEventListener("click",show);
     path.addEventListener("keydown",(event)=>{if(event.key==="Enter" || event.key===" "){event.preventDefault();show();}});
     $("mapBoundaries").appendChild(path);
   }
-  $("boundaryKey").innerHTML = [...names].sort().map((name)=>`<span><i style="background:${boundaryColor(name)}"></i>${escapeText(name)}</span>`).join("");
+  $("boundaryKey").innerHTML = [...boundaryNames].sort().map((name)=>`<button type="button" class="boundary-key-item" data-subject="${escapeText(name)}" aria-pressed="false"><i style="background:${boundaryColor(name)}"></i>${escapeText(polityLabel(name))}</button>`).join("");
   $("previousBoundaries").replaceChildren();
   const previous = window.ATLAS_BOUNDARIES[stageIndex - 1];
   if ($("compareBoundaries").checked && previous) {
@@ -103,9 +121,37 @@ function renderBoundaries(year) {
     }
     $("boundaryLabel").textContent += ` · 虚线对照 ${formatYear(previous.year)}`;
   }
-  $("boundarySelection").textContent = `当前快照收录 ${names.size} 个政权 / 文化区域（包含地图外延）`;
+  if (!boundaryNames.has(chosenSubject)) chosenSubject = "";
+  applyBoundaryFilter();
+  selectBoundary(chosenSubject);
 }
 
+function selectBoundary(subject) {
+  chosenSubject = subject;
+  for (const item of $("mapBoundaries").children) item.classList.toggle("chosen", !!subject && item.dataset.subject === subject);
+  for (const item of $("boundaryKey").children) item.setAttribute("aria-pressed", String(item.dataset.subject === subject));
+  const stage = boundaryStageFor(indexToYear(Number(slider.value)));
+  $("boundarySelection").textContent = subject ? `${polityLabel(subject)} · ${formatYear(stage.year)} 快照` : `当前快照收录 ${boundaryNames.size} 个政权 / 文化区域（包含地图外延）`;
+  $("boundarySummary").hidden = !subject;
+  if (subject) {
+    const territories = [...new Set(stage.features.filter((feature)=>(feature.properties.SUBJECTO || feature.properties.NAME) === subject).map((feature)=>feature.properties.NAME))];
+    $("boundarySummaryBody").innerHTML = `<strong>${escapeText(polityLabel(subject))}</strong><p>边界年代：${formatYear(stage.year)}</p><p>所选年份：${formatYear(indexToYear(Number(slider.value)))}</p><p>${territories.map((name)=>escapeText(polityLabel(name))).join("、")}</p><a href="https://github.com/aourednik/historical-basemaps/blob/master/geojson/${stage.filename}" target="_blank" rel="noopener noreferrer">边界原始数据 ↗</a>`;
+  }
+}
+
+function applyBoundaryFilter() {
+  const query = $("boundarySearch").value.trim().toLowerCase();
+  let count = 0;
+  for (const item of $("boundaryKey").children) {
+    const match = !query || polityLabel(item.dataset.subject).toLowerCase().includes(query);
+    item.hidden = !match;
+    if (match) count++;
+  }
+  for (const item of $("mapBoundaries").children) {
+    item.classList.toggle("dimmed", !!query && !polityLabel(item.dataset.subject).toLowerCase().includes(query));
+  }
+  $("boundaryCount").textContent = `${count} / ${boundaryNames.size}`;
+}
 
 function renderDetail(year) {
   const region = data.regions.find((r) => r.id === selected);
@@ -188,9 +234,14 @@ for (const feature of window.ATLAS_LAND.features) {
 }
 $("mapPins").innerHTML = data.regions.map((region) => {
   const [x,y] = project(region.point);
-  return `<button class="region-pin" data-region="${region.id}" style="left:${x / 760 * 100}%;top:${y / 430 * 100}%;--region-color:${region.color}" aria-label="查看${region.name}">${region.name}</button>`;
+  return `<button class="region-pin" data-region="${region.id}" data-x="${x}" data-y="${y}" style="left:${x / 760 * 100}%;top:${y / 430 * 100}%;--region-color:${region.color}" aria-label="查看${region.name}">${region.name}</button>`;
 }).join("");
 $("showRegions").addEventListener("change",()=>{$("mapPins").hidden = !$("showRegions").checked;});
+$("boundarySearch").addEventListener("input", applyBoundaryFilter);
+$("boundaryKey").addEventListener("click",(event)=>{
+  const item = event.target.closest("[data-subject]");
+  if (item) selectBoundary(chosenSubject === item.dataset.subject ? "" : item.dataset.subject);
+});
 $("compareBoundaries").addEventListener("change",()=>renderBoundaries(indexToYear(Number(slider.value))));
 $("snapshotSelect").innerHTML = window.ATLAS_BOUNDARIES.map((stage)=>`<option value="${stage.year}">${formatYear(stage.year)}</option>`).join("");
 $("snapshotSelect").addEventListener("change",()=>{stopPlayback();setYear(Number($("snapshotSelect").value));});

@@ -13,3 +13,24 @@
 .boundary-tools select{padding:5px;background:white;border:1px solid #b3c6bf;color:#295b4c;max-width:150px}
 .boundary-tools button:disabled{opacity:.4;cursor:default}
 #previousBoundaries path{fill:none;stroke:#2e3730;stroke-width:1.5;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;opacity:.8}
+.map-controls{position:absolute;right:12px;top:12px;z-index:6;display:flex;align-items:center;background:#ffffffed;border:1px solid #b4c9c0;border-radius:4px;height:34px}
+.map-controls button{border:0;background:transparent;width:34px;height:32px;display:grid;place-items:center;cursor:pointer}
+.map-controls button img{width:17px;height:17px}
+.map-controls button:disabled{opacity:.35;cursor:default}
+.map-controls output{width:42px;text-align:center;font-size:10px;font-family:Consolas,monospace}
+.map-search{display:flex;gap:10px;align-items:center;margin-top:12px;font-size:11px}
+.map-search input{min-width:0;flex:1;padding:7px 9px;background:white;border:1px solid #b3c6bf;border-radius:3px}
+.map-search output{font-family:Consolas,monospace;white-space:nowrap}
+.boundary-key-item{display:flex;align-items:center;gap:5px;border:1px solid transparent;background:transparent;padding:4px 6px;font:inherit;font-size:11px;color:#37564a;text-align:left;cursor:pointer;border-radius:3px}
+.boundary-key-item:hover,.boundary-key-item[aria-pressed=true]{border-color:#7caa94;background:#e4f0e9}
+.boundary-key-item[hidden]{display:none}
+.historical-boundary.dimmed{fill-opacity:.12;stroke-opacity:.3}
+.historical-boundary.chosen{fill-opacity:1;stroke:#263930;stroke-width:2.5}
+#mapPins{pointer-events:none}
+.region-pin{pointer-events:auto}
+#baseMap{touch-action:none;cursor:grab}
+#baseMap:active{cursor:grabbing}
+.boundary-summary{border-top:1px solid #ccdad3;margin-top:20px;padding-top:16px;font-size:11px;line-height:1.8;overflow-wrap:anywhere}
+.boundary-summary h4{font-size:11px;color:#697c74;margin:0 0 8px}
+.boundary-summary p{margin:5px 0}
+.boundary-summary strong{font-size:13px;color:#2a7159}
