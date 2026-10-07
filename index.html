@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101a2b" />
+    <title>地中海国家演变 · Mediterranean Atlas</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="workspace.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div>
+            <p class="eyebrow">MEDITERRANEAN ATLAS / 01</p>
+            <h1>地中海国家演变</h1>
+          </div>
+        </div>
+        <div class="topbar-meta">
+          <span class="status-dot"></span>
+          <span>离线档案 · 初始样例数据</span>
+          <button class="icon-button" id="resetView" title="重置时间轴" aria-label="重置时间轴">↺</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero compact-hero">
+          <div class="hero-copy">
+            <p class="kicker">从青铜时代晚期到帝国交替</p>
+            <h2>地中海<em>历史图谱</em></h2>
+            <p class="hero-intro">公元前 1000 年 — 公元 1453 年 · 沿岸政权、王朝与人物档案</p>
+          </div>
+          <span class="data-badge">研究原型 · 年度概览</span>
+        </section>
+
+        <section class="timeline-panel" aria-label="历史时间轴">
+          <div class="timeline-head">
+            <div>
+              <p class="section-label">时间轴 / YEAR SCRUBBER</p>
+              <div class="year-readout"><span id="yearLabel">公元前 1000 年</span><span class="year-tag" id="eraLabel">铁器时代</span></div>
+            </div>
+            <div class="timeline-actions">
+              <form id="yearForm" class="year-form">
+                <select id="yearEra" aria-label="纪年"><option value="bce">公元前</option><option value="ce">公元</option></select>
+                <input id="yearInput" aria-label="年份" type="number" min="1" max="1453" value="1000" required />
+                <button type="submit" title="跳转年份" aria-label="跳转年份">→</button>
+              </form>
+              <button class="text-button" id="playButton"><span class="play-icon">▶</span><span id="playLabel">播放</span></button>
+              <div class="stepper">
+                <button class="step-button" id="stepBack" title="向前 50 年" aria-label="向前 50 年">−50</button>
+                <button class="step-button" id="stepForward" title="向后 50 年" aria-label="向后 50 年">+50</button>
+              </div>
+            </div>
+          </div>
+          <div class="slider-wrap">
+            <div class="slider-rail"><div class="slider-progress" id="sliderProgress"></div></div>
+            <input id="yearSlider" type="range" min="-1000" max="1453" step="1" value="-1000" aria-label="选择历史年份" />
+            <div class="tick-row">
+              <span>前 1000</span><span>前 500</span><span>公元 1</span><span>500</span><span>1000</span><span>1453</span>
+            </div>
+          </div>
+          <div id="timelineScroller" class="timeline-scroller" tabindex="0" aria-label="横向滚动年代轴"><div id="timelineTrack" class="timeline-track"></div></div>
+        </section>
+
+        <section class="context-strip">
+          <div class="context-item"><span class="context-number" id="activeCount">7</span><span>已录入沿岸地区</span></div>
+          <div class="context-item"><span class="context-number" id="eventCount">0</span><span>前后 50 年事件</span></div>
+          <div class="context-item wide"><span class="context-number accent">MED</span><span>地中海世界 · 东西交汇的内海</span></div>
+        </section>
+
+        <section class="atlas-grid">
+          <div class="map-card">
+            <div class="card-head">
+              <div><p class="section-label">地区档案 / REGIONS</p><h3>地中海沿岸</h3></div>
+              <span class="map-coord">35°N · 18°E</span>
+            </div>
+            <div class="map-stage" id="mapStage" aria-label="地中海势力示意图">
+              <div class="sea-glow"></div>
+              <svg id="baseMap" viewBox="0 0 760 430" preserveAspectRatio="none" role="img" aria-label="地中海自然海岸线地图">
+                <g id="mapLand"></g>
+                <g class="legacy-map" style="display:none">
+                <path class="land land-west" d="M34 72 C94 44 123 54 157 77 C190 97 214 114 242 141 L252 197 C211 206 176 194 143 171 C114 150 83 143 57 119 C42 105 28 91 34 72Z"/>
+                <path class="land land-north" d="M229 42 C294 22 353 33 403 57 C439 74 484 81 527 73 C575 64 612 81 646 111 L632 150 C575 145 529 151 487 158 C432 168 385 159 337 150 C298 142 254 130 224 105Z"/>
+                <path class="land land-east" d="M645 107 C691 122 717 144 728 177 C719 218 684 233 652 238 C626 242 607 224 592 203 L602 164Z"/>
+                <path class="land land-south" d="M260 253 C311 242 362 252 405 274 C444 295 484 316 538 320 C578 324 616 337 638 362 C592 382 541 382 493 370 C441 359 394 351 340 344 C301 339 257 319 232 294Z"/>
+                <path class="island" d="M347 178 C365 163 386 171 392 191 C398 213 385 237 366 244 C350 235 341 208 347 178Z"/>
+                <path class="island" d="M491 184 C509 176 521 186 520 206 C517 224 503 234 491 227 C481 215 481 195 491 184Z"/>
+                <path class="island" d="M549 251 C561 243 575 249 576 266 C573 283 560 290 548 282 C541 272 542 259 549 251Z"/>
+                <path class="island" d="M188 222 C199 214 211 220 214 234 C210 247 198 252 189 244 C183 237 183 228 188 222Z"/>
+                <g class="map-label label-iberia"><circle r="5"/><text x="10" y="5">伊比利亚</text></g>
+                <g class="map-label label-italy"><circle r="5"/><text x="10" y="5">意大利</text></g>
+                <g class="map-label label-egypt"><circle r="5"/><text x="10" y="5">埃及</text></g>
+                <g class="map-label label-anatolia"><circle r="5"/><text x="10" y="5">安纳托利亚</text></g>
+                <g class="map-label label-greece"><circle r="5"/><text x="10" y="5">希腊</text></g>
+                </g>
+              </svg>
+              <div id="mapPins"></div>
+              <div class="map-legend">地区定位示意 · 非历史疆界 · Natural Earth</div>
+            </div>
+          </div>
+          <aside class="detail-card">
+            <div class="card-head"><div><p class="section-label">阶段注记 / PERIOD NOTE</p><h3 id="periodTitle">铁器时代的海上网络</h3></div><span class="period-index" id="periodIndex">01</span></div>
+            <p class="period-copy" id="periodCopy"></p>
+            <div id="detailBody"></div>
+          </aside>
+        </section>
+
+        <section class="content-section">
+          <div class="section-title-row"><div><p class="section-label">政权档案 / POLITIES</p><h2>沿岸政权与王朝</h2></div><p class="section-hint">部分地区有多个政权并立</p></div>
+          <div class="polity-grid" id="polityGrid"></div>
+        </section>
+
+        <section class="content-section events-section">
+          <div class="section-title-row"><div><p class="section-label">关键节点 / EVENTS</p><h2>重要历史事件</h2></div><p class="section-hint">所选年前后 50 年</p></div>
+          <div class="events-list" id="eventsList"></div>
+        </section>
+      </main>
+      <footer><span>地中海国家演变 · 本地研究工作台</span><span>初始资料非完整通史；年度交接与边界为概览，待史料复核。</span></footer>
+    </div>
+    <script src="history.js"></script>
+    <script src="land.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

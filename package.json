@@ -1,0 +1,12 @@
+{
+  "name": "mediterranean-history-atlas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline Mediterranean historical atlas",
+  "scripts": {
+    "start": "node server.cjs",
+    "prepare-map": "node prepare-map.cjs",
+    "test": "node test.cjs"
+  },
+  "engines": {"node": ">=18"}
+}

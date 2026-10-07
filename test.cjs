@@ -1,0 +1,93 @@
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const vm = require("node:vm");
+const path = require("node:path");
+const context = {window:{}};
+vm.createContext(context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,"history.js"),"utf8"),context);
+const data = context.window.historyData;
+let periodCount = 0;
+for (const region of data.regions) {
+  const years = new Set();
+  for (const [start,end] of region.periods) {
+    assert(start <= end, `${region.id}: reversed interval`);
+    assert(start !== 0 && end !== 0, "No historical year zero");
+    periodCount++;
+    for (let year=start;year<=end;year++) {
+      if (year === 0) continue;
+      assert(!years.has(year), `${region.id}: overlapping ${year}`);
+      years.add(year);
+    }
+  }
+  assert.equal(years.size,2453,`${region.id}: incomplete region timeline`);
+}
+for (const record of [...data.rulers,...data.people]) {
+  assert(data.regions.some((r) => r.id === record[0]),"Unknown region");
+  assert(record[1] <= record[2],"Reversed tenure");
+  assert(record[5],"Missing reference");
+}
+const source = fs.readFileSync(path.join(__dirname,"app.js"),"utf8");
+const functions = source.slice(source.indexOf("const yearToIndex"), source.indexOf("const formatYear"));
+vm.runInContext(functions + ";this.toIndex=yearToIndex;this.toYear=indexToYear",context);
+assert.equal(context.toYear(context.toIndex(-1)+1),1);
+assert.equal(context.toYear(context.toIndex(1)-1),-1);
+console.log(`Data checks passed: ${data.regions.length} regions, ${periodCount} stages, ${data.rulers.length} ruler samples, ${data.people.length} people, ${data.events.length} events.`);
+
+async function browserTests() {
+  let playwright;
+  try { playwright = require("playwright"); } catch {
+    console.log("Browser tests skipped: set NODE_PATH to a Playwright installation.");
+    return;
+  }
+  let browser;
+  try { browser = await playwright.chromium.launch({headless:true}); }
+  catch { browser = await playwright.chromium.launch({headless:true,channel:"msedge"}); }
+  try {
+    const page = await browser.newPage({viewport:{width:1440,height:1000}});
+    const errors=[];
+    page.on("pageerror",(error)=>errors.push(error.message));
+    await page.goto(process.env.TEST_URL || "http://127.0.0.1:8766");
+    assert.match(await page.locator("#yearLabel").innerText(),/1000/);
+    assert.equal(await page.locator(".polity-card").count(),7);
+    assert(await page.locator("#mapLand path").count() > 0,"Map must be rendered");
+    const jump = async (era,year) => {
+      await page.locator("#yearEra").selectOption(era);
+      await page.locator("#yearInput").fill(String(year));
+      await page.getByRole("button",{name:"跳转年份",exact:true}).click();
+    };
+    await jump("bce",50);
+    assert.match(await page.locator("#detailBody").innerText(),/克娄巴特拉/);
+    await jump("ce",100);
+    assert.match(await page.locator(".polity-card[data-region=italy]").innerText(),/图拉真/);
+    await page.locator(".region-pin[data-region=italy]").click();
+    assert.match(await page.locator("#detailBody").innerText(),/图拉真/);
+    await page.locator("#yearSlider").fill("0");
+    assert.equal(await page.locator("#yearLabel").innerText(),"公元前 1 年");
+    await page.locator("#yearSlider").press("ArrowRight");
+    assert.equal(await page.locator("#yearLabel").innerText(),"公元 1 年");
+    await jump("ce",1204);
+    assert.match(await page.locator("#eventsList").innerText(),/十字军/);
+    await page.getByRole("button",{name:"播放时间轴",exact:true}).click();
+    await page.waitForTimeout(350);
+    assert(Number(await page.locator("#yearSlider").inputValue()) > 1204);
+    await page.getByRole("button",{name:"暂停时间轴",exact:true}).click();
+    await jump("ce",1453);
+    assert.match(await page.locator("#eventsList").innerText(),/君士坦丁堡陷落/);
+    assert(await page.locator("#timelineScroller").evaluate((el)=>el.scrollLeft > 0));
+    await page.getByRole("button",{name:"重置时间轴",exact:true}).click();
+    fs.mkdirSync("test-results",{recursive:true});
+    await page.screenshot({path:"test-results/desktop.png",fullPage:true});
+    await page.setViewportSize({width:390,height:844});
+    await page.screenshot({path:"test-results/mobile.png",fullPage:true});
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth),"Mobile page overflow");
+    assert.equal(errors.length,0,errors.join("\n"));
+    const requests=[];
+    const offline = await browser.newPage();
+    offline.on("request",(request)=>requests.push(request.url()));
+    await offline.goto("file:///" + path.join(__dirname,"index.html").replaceAll("\\","/"));
+    assert.equal(await offline.locator(".polity-card").count(),7);
+    assert(requests.every((url)=>url.startsWith("file:")),"Offline build must not request network resources");
+    console.log("Browser checks passed: year changes, dynasty/ruler filtering, selection, BCE/CE transition, events, playback, horizontal scroll, reset, desktop/mobile layout and offline file opening.");
+  } finally { await browser.close(); }
+}
+browserTests().catch((error)=>{console.error(error);process.exitCode=1;});
