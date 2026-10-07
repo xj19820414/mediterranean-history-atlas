@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.cjs",
     "prepare-map": "node prepare-map.cjs",
+    "prepare-boundaries": "node prepare-boundaries.cjs",
     "test": "node test.cjs"
   },
   "engines": {"node": ">=18"}

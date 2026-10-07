@@ -2,7 +2,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const root = __dirname;
-const types = {".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",".js":"text/javascript; charset=utf-8",".json":"application/json"};
+const types = {".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",".js":"text/javascript; charset=utf-8",".json":"application/json",".svg":"image/svg+xml"};
 const port = Number(process.env.PORT || 4175);
 http.createServer((request,response) => {
   let filename;

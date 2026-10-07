@@ -52,6 +52,7 @@ async function browserTests() {
     assert.equal(await page.locator(".polity-card").count(),7);
     assert(await page.locator("#mapLand path").count() > 0,"Map must be rendered");
     assert(await page.locator("#mapBoundaries path").count() > 0,"Historical boundaries must be rendered");
+    assert(await page.locator(".map-controls img").evaluateAll((images)=>images.every((image)=>image.complete && image.naturalWidth>0)),"Map icons must load");
     const earlyBorders = await page.locator("#mapBoundaries").innerHTML();
     const jump = async (era,year) => {
       await page.locator("#yearEra").selectOption(era);
