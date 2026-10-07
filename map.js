@@ -9,6 +9,7 @@
       const {x, y, k} = event.transform;
       viewport.attr("transform", event.transform);
       document.getElementById("mapZoomLabel").textContent = `${Math.round(k * 100)}%`;
+      window.AtlasAnnotations.zoom(event.transform);
       document.querySelectorAll(".region-pin").forEach((pin) => {
         pin.style.left = `${(Number(pin.dataset.x) * k + x) / 760 * 100}%`;
         pin.style.top = `${(Number(pin.dataset.y) * k + y) / 430 * 100}%`;

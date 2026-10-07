@@ -1,0 +1,48 @@
+// Rounded geographic associations, not precise battle footprints or annual whereabouts.
+window.ATLAS_ANNOTATIONS = {
+  events: {
+    "-814":{point:[10.32,36.86],place:"迦太基",precision:"传统建城纪年"},
+    "-525":{point:[32.55,31.04],place:"佩鲁西乌姆附近",precision:"战役区域示意"},
+    "-480":{point:[23.55,37.95],place:"萨拉米斯海峡",precision:"海战区域示意"},
+    "-431":{point:[23.73,37.98],place:"雅典",precision:"战争起点关联城市，非全部战区"},
+    "-332":{point:[29.92,31.20],place:"亚历山大城",precision:"进入埃及后的建城关联地点"},
+    "-218":{point:[10.32,36.86],place:"迦太基",precision:"参战政权中心，非战争起点"},
+    "-146":{point:[10.32,36.86],place:"迦太基",precision:"同时涉及科林斯，此处标出迦太基"},
+    "-31":{point:[20.77,38.95],place:"亚克兴",precision:"海战区域示意"},
+    "-30":{point:[29.92,31.20],place:"亚历山大城",precision:"政权交接关联城市"},
+    "-27":{point:[12.49,41.90],place:"罗马",precision:"政治中心"},
+    "330":{point:[28.98,41.01],place:"君士坦丁堡",precision:"城市定位"},
+    "476":{point:[12.20,44.42],place:"拉文纳",precision:"政权交接关联城市"},
+    "534":{point:[10.32,36.86],place:"迦太基",precision:"北非战事关联城市"},
+    "641":{point:[31.23,30.04],place:"福斯塔特附近",precision:"征服埃及的关联城市"},
+    "711":{point:[-5.35,36.14],place:"直布罗陀",precision:"登陆关联地点"},
+    "969":{point:[31.23,30.04],place:"开罗",precision:"城市定位"},
+    "1071":{point:[42.54,39.15],place:"曼齐刻尔特",precision:"战役区域示意"},
+    "1204":{point:[28.98,41.01],place:"君士坦丁堡",precision:"城市定位"},
+    "1261":{point:[28.98,41.01],place:"君士坦丁堡",precision:"城市定位"},
+    "1291":{point:[35.08,32.93],place:"阿克",precision:"城市定位"},
+    "1453":{point:[28.98,41.01],place:"君士坦丁堡",precision:"城市定位"}
+  },
+  people: {
+    "Psamtik_I":{point:[30.77,30.96],place:"赛斯",relation:"王朝都城"},
+    "Ptolemy_I_Soter":{point:[29.92,31.20],place:"亚历山大城",relation:"统治中心"},
+    "Cleopatra":{point:[29.92,31.20],place:"亚历山大城",relation:"统治中心"},
+    "Pericles":{point:[23.73,37.98],place:"雅典",relation:"政治活动关联城市"},
+    "Alexander_the_Great":{point:[22.52,40.76],place:"佩拉",relation:"马其顿王都"},
+    "Augustus":{point:[12.49,41.90],place:"罗马",relation:"统治中心"},
+    "Claudius":{point:[12.49,41.90],place:"罗马",relation:"统治中心"},
+    "Trajan":{point:[12.49,41.90],place:"罗马",relation:"统治中心"},
+    "Justinian_I":{point:[28.98,41.01],place:"君士坦丁堡",relation:"统治中心"},
+    "Basil_II":{point:[28.98,41.01],place:"君士坦丁堡",relation:"统治中心"},
+    "Constantine_XI_Palaiologos":{point:[28.98,41.01],place:"君士坦丁堡",relation:"统治中心"},
+    "Mehmed_II":{point:[28.98,41.01],place:"君士坦丁堡",relation:"1453 年征服关联城市，非全任期居所"},
+    "Abd_al-Rahman_III":{point:[-4.78,37.89],place:"科尔多瓦",relation:"统治中心"},
+    "Herodotus":{point:[27.42,37.04],place:"哈利卡纳苏斯",relation:"出生地"},
+    "Socrates":{point:[23.73,37.98],place:"雅典",relation:"活动关联城市"},
+    "Aristotle":{point:[23.73,37.98],place:"雅典",relation:"吕克昂学园关联城市，非全生涯居所"},
+    "Julius_Caesar":{point:[12.49,41.90],place:"罗马",relation:"政治活动关联城市"},
+    "Hannibal":{point:[10.32,36.86],place:"迦太基",relation:"出生地与所属政权"},
+    "Procopius":{point:[28.98,41.01],place:"君士坦丁堡",relation:"著述活动关联城市"},
+    "Ibn_Khaldun":{point:[10.18,36.80],place:"突尼斯",relation:"出生地"}
+  }
+};

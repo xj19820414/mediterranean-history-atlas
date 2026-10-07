@@ -17,18 +17,8 @@ const position = (year) => ((yearToIndex(year) - minIndex) / (maxIndex - minInde
 const sourceLink = (page, label = "参考条目") => `<a href="https://en.wikipedia.org/wiki/${encodeURIComponent(page)}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
 const boundaryStageFor = (year) => [...window.ATLAS_BOUNDARIES].reverse().find((stage) => stage.year <= year) || window.ATLAS_BOUNDARIES[0];
 const escapeText = (value) => String(value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
-const polityLabels = {
-  "Egypt":"埃及", "Roman Empire":"罗马帝国", "Roman Republic":"罗马共和国",
-  "Western Roman Empire":"西罗马帝国", "Eastern Roman Empire":"东罗马帝国",
-  "Byzantine Empire":"拜占庭帝国", "Ottoman Empire":"奥斯曼帝国",
-  "Carthaginian Empire":"迦太基势力", "Carthage":"迦太基",
-  "Ptolemaic Kingdom":"托勒密王国", "Seleucid Kingdom":"塞琉古王国",
-  "Achaemenid Empire":"阿契美尼德帝国", "Mamluke Sultanate":"马穆鲁克苏丹国",
-  "Fatimid Caliphate":"法蒂玛哈里发国", "Venice":"威尼斯",
-  "Macedon and Hellenic League":"马其顿与希腊联盟", "France":"法国",
-  "Holy Roman Empire":"神圣罗马帝国"
-};
-const polityLabel = (name) => polityLabels[name] ? `${polityLabels[name]} · ${name}` : name;
+const polityLabels = window.ATLAS_LABELS_ZH;
+const polityLabel = (name) => polityLabels[name] || "名称待考";
 const boundaryColor = (subject) => {
   const hash = [...subject].reduce((value,char)=>(value*31+char.charCodeAt(0))>>>0,0);
   return `hsl(${hash%360} 42% 60%)`;
@@ -68,6 +58,7 @@ function render(year, follow = true) {
     pin.title = `${pin.textContent} · ${period ? period[2] : "未录入"}`;
   }
   renderDetail(year);
+  window.AtlasAnnotations.render(year, boundaryStageFor(year));
   if (follow) {
     const scroller = $("timelineScroller");
     const x = position(year) / 100 * $("timelineTrack").clientWidth;
@@ -143,14 +134,15 @@ function applyBoundaryFilter() {
   const query = $("boundarySearch").value.trim().toLowerCase();
   let count = 0;
   for (const item of $("boundaryKey").children) {
-    const match = !query || polityLabel(item.dataset.subject).toLowerCase().includes(query);
+    const match = !query || `${polityLabel(item.dataset.subject)} ${item.dataset.subject}`.toLowerCase().includes(query);
     item.hidden = !match;
     if (match) count++;
   }
   for (const item of $("mapBoundaries").children) {
-    item.classList.toggle("dimmed", !!query && !polityLabel(item.dataset.subject).toLowerCase().includes(query));
+    item.classList.toggle("dimmed", !!query && !`${polityLabel(item.dataset.subject)} ${item.dataset.subject}`.toLowerCase().includes(query));
   }
   $("boundaryCount").textContent = `${count} / ${boundaryNames.size}`;
+  window.AtlasAnnotations?.filter(query);
 }
 
 function renderDetail(year) {

@@ -5,7 +5,18 @@ const path = require("node:path");
 const context = {window:{}};
 vm.createContext(context);
 vm.runInContext(fs.readFileSync(path.join(__dirname,"history.js"),"utf8"),context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,"labels-zh.js"),"utf8"),context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,"boundaries.js"),"utf8"),context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,"annotation-data.js"),"utf8"),context);
+for(const stage of context.window.ATLAS_BOUNDARIES) for(const feature of stage.features) {
+  for(const name of [feature.properties.NAME,feature.properties.SUBJECTO].filter(Boolean)) {
+    assert(context.window.ATLAS_LABELS_ZH[name],`Missing Chinese name: ${name}`);
+    assert(!/[A-Za-z]/.test(context.window.ATLAS_LABELS_ZH[name]),`Non-Chinese label: ${name}`);
+  }
+}
 const data = context.window.historyData;
+for(const event of data.events) assert(context.window.ATLAS_ANNOTATIONS.events[event[0]],"Event needs map location");
+for(const person of [...data.rulers,...data.people]) assert(context.window.ATLAS_ANNOTATIONS.people[person[5]],"Person needs map location");
 let periodCount = 0;
 for (const region of data.regions) {
   const years = new Set();
@@ -61,8 +72,25 @@ async function browserTests() {
     };
     await jump("bce",50);
     assert.match(await page.locator("#detailBody").innerText(),/克娄巴特拉/);
+    assert(!/[A-Za-z]/.test(await page.locator("#boundaryKey").innerText()),"Legend names must be Chinese only");
+    assert(await page.locator(".polity-label:visible").count()>0,"Polity names must appear on map");
+    assert.match(await page.locator("#mapAnnotations").innerText(),/克娄巴特拉/);
+    assert(await page.locator(".event-label:visible").count()>0,"Events must appear on map");
+    const personLabel = page.locator(".person-label:visible").filter({hasText:"克娄巴特拉"}).first();
+    await personLabel.click();
+    assert.match(await page.locator("#annotationBody").innerText(),/亚历山大城/);
+    await page.locator(".event-label:visible").first().click();
+    assert.match(await page.locator("#annotationTitle").innerText(),/历史事件/);
+    await page.locator("#mapStage").screenshot({path:"test-results/annotated-bce.png"});
+    await page.locator("#showMapEvents").uncheck();
+    assert.equal(await page.locator(".event-label:visible").count(),0);
+    await page.locator("#showMapEvents").check();
+    await page.locator("#showMapPeople").uncheck();
+    assert.equal(await page.locator(".person-label:visible").count(),0);
+    await page.locator("#showMapPeople").check();
     await jump("ce",100);
     assert.equal(await page.locator("#mapBoundaries").getAttribute("data-snapshot"),"100");
+    assert(await page.locator(".polity-label:visible").filter({hasText:"罗马帝国"}).count()>0,"Major polity name must remain visible");
     assert.notEqual(await page.locator("#mapBoundaries").innerHTML(),earlyBorders,"Boundaries must change");
     await page.locator("#compareBoundaries").check();
     assert(await page.locator("#previousBoundaries path").count() > 0,"Previous snapshot comparison must render");
@@ -114,6 +142,9 @@ async function browserTests() {
     assert(Number(await page.locator("#yearSlider").inputValue()) > 1204);
     await page.getByRole("button",{name:"暂停时间轴",exact:true}).click();
     await jump("ce",1453);
+    assert.match(await page.locator("#mapAnnotations").innerText(),/君士坦丁堡陷落/);
+    assert.match(await page.locator("#mapAnnotations").innerText(),/穆罕默德二世/);
+    await page.locator("#mapStage").screenshot({path:"test-results/annotated-1453.png"});
     assert.equal(await page.locator("#mapBoundaries").getAttribute("data-snapshot"),"1400");
     await page.locator("#mapStage").screenshot({path:"test-results/medieval-boundaries.png"});
     await page.locator("#snapshotSelect").selectOption("-500");

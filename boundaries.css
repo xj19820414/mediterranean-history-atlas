@@ -34,3 +34,18 @@
 .boundary-summary h4{font-size:11px;color:#697c74;margin:0 0 8px}
 .boundary-summary p{margin:5px 0}
 .boundary-summary strong{font-size:13px;color:#2a7159}
+#mapAnnotations{position:absolute;inset:0;pointer-events:none;z-index:5}
+.atlas-label{position:absolute;pointer-events:auto;max-width:145px;font:11px "Microsoft YaHei","Segoe UI",sans-serif;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:3px 6px;border-radius:3px;cursor:pointer}
+.polity-label{color:#1c372d;background:#ffffffbb;border:1px solid #fff;text-shadow:0 1px white;font-weight:600}
+.event-label{color:#853920;background:#fff7ef;border:1px solid #c5744b;border-left-width:4px}
+.person-label{color:#34507f;background:#f3f7ff;border:1px solid #7192bb;border-left-width:4px}
+.person-label,.event-label{white-space:pre-line;max-width:190px;overflow:visible;text-overflow:clip}
+.atlas-label[hidden]{display:none}
+.atlas-label:hover,.atlas-label.annotation-selected{outline:2px solid #d2a34f;outline-offset:1px}
+.annotation-tools{display:flex;align-items:center;gap:8px 15px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#43604f}
+.annotation-tools label{display:flex;align-items:center;gap:4px}
+.annotation-tools span{font-size:10px;color:#708478}
+.event-swatch,.person-swatch{width:7px;height:7px;display:inline-block;background:#c5744b}
+.person-swatch{background:#7192bb}
+#annotationBody strong{display:block;margin-top:10px}
+#annotationBody small{display:block;margin-top:12px;color:#6e8076}
