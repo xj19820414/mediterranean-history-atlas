@@ -18,7 +18,8 @@ const sourceLink = (page, label = "参考条目") => `<a href="https://en.wikipe
 const boundaryStageFor = (year) => [...window.ATLAS_BOUNDARIES].reverse().find((stage) => stage.year <= year) || window.ATLAS_BOUNDARIES[0];
 const escapeText = (value) => String(value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
 const polityLabels = window.ATLAS_LABELS_ZH;
-const polityLabel = (name) => polityLabels[name] || "名称待考";
+const polityLabel = (name) => window.AtlasLanguage === "en" ? name : (polityLabels[name] || "名称待考");
+const eventTitle = (title) => window.AtlasLanguage === "en" ? (window.ATLAS_I18N.eventTitles[title] || title) : title;
 const boundaryColor = (subject) => {
   const hash = [...subject].reduce((value,char)=>(value*31+char.charCodeAt(0))>>>0,0);
   return `hsl(${hash%360} 42% 60%)`;
@@ -48,7 +49,7 @@ function render(year, follow = true) {
       <h3>${period[2]}</h3><span class="polity-dynasty">${period[3]}</span>
       <span class="polity-ruler">当年统治者 / 执政者<strong>${rulers.length ? rulers.map((r) => r[3]).join("、") : "任期资料未录入"}</strong></span></button>`;
   }).join("");
-  $("eventsList").innerHTML = nearby.length ? nearby.map(([date,title,description,id,source]) => `<article class="event-item"><div class="event-year">${formatYear(date)}</div><div><h3>${title}</h3><p>${description}</p><div class="event-location">${data.regions.find((r) => r.id === id).name} · ${sourceLink(source)}</div><button class="event-jump" data-year="${date}">定位该年</button></div></article>`).join("") : `<p class="empty-events">该年前后 50 年暂无已录入事件。</p>`;
+  $("eventsList").innerHTML = nearby.length ? nearby.map(([date,title,description,id,source]) => `<article class="event-item"><div class="event-year">${formatYear(date)}</div><div><h3>${eventTitle(title)}</h3><p>${description}</p><div class="event-location">${data.regions.find((r) => r.id === id).name} · ${sourceLink(source)}</div><button class="event-jump" data-year="${date}">${window.AtlasLanguage === "en" ? "Locate year" : "定位该年"}</button></div></article>`).join("") : `<p class="empty-events">${window.AtlasI18n?.t("noEvents") || "该年前后 50 年暂无已录入事件。"}</p>`;
   $("timelineMarker").style.left = `${position(year)}%`;
   $("timelineMarker").textContent = formatYear(year);
   for (const pin of document.querySelectorAll(".region-pin")) {
@@ -247,3 +248,4 @@ for (const [id,direction] of [["previousBoundary",-1],["nextBoundary",1]]) {
   });
 }
 setYear(-1000);
+window.addEventListener("atlas-language-change", () => render(indexToYear(Number(slider.value)), false));

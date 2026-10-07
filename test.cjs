@@ -60,6 +60,13 @@ async function browserTests() {
     page.on("pageerror",(error)=>errors.push(error.message));
     await page.goto(process.env.TEST_URL || "http://127.0.0.1:8766");
     assert.match(await page.locator("#yearLabel").innerText(),/1000/);
+    if (await page.locator("#languageToggle").innerText() === "EN") await page.getByRole("button",{name:"切换语言",exact:true}).click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator("#languageToggle").innerText(),"中");
+    assert.match(await page.locator("#mapAnnotations").innerText(),/Carthage|Roman|Egypt/);
+    await page.getByRole("button",{name:"切换语言",exact:true}).click();
+    assert.equal(await page.locator("#languageToggle").innerText(),"EN");
+    assert.match(await page.locator("#mapAnnotations").innerText(),/[一-龥]/);
     assert.equal(await page.locator(".polity-card").count(),7);
     assert(await page.locator("#mapLand path").count() > 0,"Map must be rendered");
     assert(await page.locator("#mapBoundaries path").count() > 0,"Historical boundaries must be rendered");

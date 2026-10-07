@@ -15,14 +15,14 @@
         <div class="brand">
           <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
           <div>
-            <p class="eyebrow">MEDITERRANEAN ATLAS / 01</p>
-            <h1>地中海国家演变</h1>
+            <p class="eyebrow" data-i18n="eyebrow">MEDITERRANEAN ATLAS / 01</p>
+            <h1 data-i18n="title">地中海国家演变</h1>
           </div>
         </div>
         <div class="topbar-meta">
           <span class="status-dot"></span>
           <span>离线档案 · 初始样例数据</span>
-          <button class="icon-button" id="resetView" title="重置时间轴" aria-label="重置时间轴">↺</button>
+          <button class="text-button language-toggle" id="languageToggle" title="切换语言" aria-label="切换语言">EN</button><button class="icon-button" id="resetView" title="重置时间轴" aria-label="重置时间轴">↺</button>
         </div>
       </header>
 
@@ -31,15 +31,15 @@
           <div class="hero-copy">
             <p class="kicker">从青铜时代晚期到帝国交替</p>
             <h2>地中海<em>历史图谱</em></h2>
-            <p class="hero-intro">公元前 1000 年 — 公元 1453 年 · 沿岸政权、王朝与人物档案</p>
+            <p class="hero-intro" data-i18n="intro">公元前 1000 年 — 公元 1453 年 · 沿岸政权、王朝与人物档案</p>
           </div>
-          <span class="data-badge">研究原型 · 年度概览</span>
+          <span class="data-badge" data-i18n="badge">研究原型 · 年度概览</span>
         </section>
 
         <section class="timeline-panel" aria-label="历史时间轴">
           <div class="timeline-head">
             <div>
-              <p class="section-label">时间轴 / YEAR SCRUBBER</p>
+              <p class="section-label" data-i18n="scrubber">时间轴 / YEAR SCRUBBER</p>
               <div class="year-readout"><span id="yearLabel">公元前 1000 年</span><span class="year-tag" id="eraLabel">铁器时代</span></div>
             </div>
             <div class="timeline-actions">
@@ -48,7 +48,7 @@
                 <input id="yearInput" aria-label="年份" type="number" min="1" max="1453" value="1000" required />
                 <button type="submit" title="跳转年份" aria-label="跳转年份">→</button>
               </form>
-              <button class="text-button" id="playButton"><span class="play-icon">▶</span><span id="playLabel">播放</span></button>
+              <button class="text-button" id="playButton"><span class="play-icon">▶</span><span id="playLabel" data-i18n="play">播放</span></button>
               <div class="stepper">
                 <button class="step-button" id="stepBack" title="向前 50 年" aria-label="向前 50 年">−50</button>
                 <button class="step-button" id="stepForward" title="向后 50 年" aria-label="向后 50 年">+50</button>
@@ -66,15 +66,15 @@
         </section>
 
         <section class="context-strip">
-          <div class="context-item"><span class="context-number" id="activeCount">7</span><span>已录入沿岸地区</span></div>
-          <div class="context-item"><span class="context-number" id="eventCount">0</span><span>前后 50 年事件</span></div>
-          <div class="context-item wide"><span class="context-number accent">MED</span><span>地中海世界 · 东西交汇的内海</span></div>
+          <div class="context-item"><span class="context-number" id="activeCount">7</span><span data-i18n="active">已录入沿岸地区</span></div>
+          <div class="context-item"><span class="context-number" id="eventCount">0</span><span data-i18n="events50">前后 50 年事件</span></div>
+          <div class="context-item wide"><span class="context-number accent">MED</span><span data-i18n="med">地中海世界 · 东西交汇的内海</span></div>
         </section>
 
         <section class="atlas-grid">
           <div class="map-card">
             <div class="card-head">
-              <div><p class="section-label">地区档案 / REGIONS</p><h3>地中海沿岸</h3></div>
+              <div><p class="section-label" data-i18n="regions">地区档案 / REGIONS</p><h3 data-i18n="sea">地中海沿岸</h3></div>
               <span class="map-coord">35°N · 18°E</span>
             </div>
             <div class="map-stage" id="mapStage" aria-label="地中海势力示意图">
@@ -106,10 +106,10 @@
               <div class="map-controls"><button id="mapZoomOut" title="缩小地图" aria-label="缩小地图"><img src="data:image/svg+xml;base64,PHN2ZwogIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICB3aWR0aD0iMjQiCiAgaGVpZ2h0PSIyNCIKICB2aWV3Qm94PSIwIDAgMjQgMjQiCiAgZmlsbD0ibm9uZSIKICBzdHJva2U9ImN1cnJlbnRDb2xvciIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8Y2lyY2xlIGN4PSIxMSIgY3k9IjExIiByPSI4IiAvPgogIDxsaW5lIHgxPSIyMSIgeDI9IjE2LjY1IiB5MT0iMjEiIHkyPSIxNi42NSIgLz4KICA8bGluZSB4MT0iOCIgeDI9IjE0IiB5MT0iMTEiIHkyPSIxMSIgLz4KPC9zdmc+Cg==" alt="" /></button><output id="mapZoomLabel" aria-label="地图缩放比例">100%</output><button id="mapZoomIn" title="放大地图" aria-label="放大地图"><img src="data:image/svg+xml;base64,PHN2ZwogIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICB3aWR0aD0iMjQiCiAgaGVpZ2h0PSIyNCIKICB2aWV3Qm94PSIwIDAgMjQgMjQiCiAgZmlsbD0ibm9uZSIKICBzdHJva2U9ImN1cnJlbnRDb2xvciIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8Y2lyY2xlIGN4PSIxMSIgY3k9IjExIiByPSI4IiAvPgogIDxsaW5lIHgxPSIyMSIgeDI9IjE2LjY1IiB5MT0iMjEiIHkyPSIxNi42NSIgLz4KICA8bGluZSB4MT0iMTEiIHgyPSIxMSIgeTE9IjgiIHkyPSIxNCIgLz4KICA8bGluZSB4MT0iOCIgeDI9IjE0IiB5MT0iMTEiIHkyPSIxMSIgLz4KPC9zdmc+Cg==" alt="" /></button><button id="resetMap" title="重置地图视图" aria-label="重置地图视图"><img src="data:image/svg+xml;base64,PHN2ZwogIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICB3aWR0aD0iMjQiCiAgaGVpZ2h0PSIyNCIKICB2aWV3Qm94PSIwIDAgMjQgMjQiCiAgZmlsbD0ibm9uZSIKICBzdHJva2U9ImN1cnJlbnRDb2xvciIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8cGF0aCBkPSJNOCAzSDVhMiAyIDAgMCAwLTIgMnYzIiAvPgogIDxwYXRoIGQ9Ik0yMSA4VjVhMiAyIDAgMCAwLTItMmgtMyIgLz4KICA8cGF0aCBkPSJNMyAxNnYzYTIgMiAwIDAgMCAyIDJoMyIgLz4KICA8cGF0aCBkPSJNMTYgMjFoM2EyIDIgMCAwIDAgMi0ydi0zIiAvPgo8L3N2Zz4K" alt="" /></button></div>
               <div class="map-legend"><span id="boundaryLabel">历史势力范围 · 示意边界</span><span class="map-legend-note">现代海岸线 · Natural Earth</span></div>
             </div>
-            <div class="boundary-tools"><button id="previousBoundary" aria-label="上一个边界快照">← 上一快照</button><button id="nextBoundary" aria-label="下一个边界快照">下一快照 →</button><select id="snapshotSelect" aria-label="边界快照年份"></select><label><input id="showRegions" type="checkbox" checked /> 地区标记</label><label><input id="compareBoundaries" type="checkbox" /> 对照上一快照</label></div>
+            <div class="boundary-tools"><button id="previousBoundary" aria-label="上一个边界快照" data-i18n="prev">← 上一快照</button><button id="nextBoundary" aria-label="下一个边界快照" data-i18n="next">下一快照 →</button><select id="snapshotSelect" aria-label="边界快照年份"></select><label><input id="showRegions" type="checkbox" checked /> <span data-i18n="regionTags">地区标记</span></label><label><input id="compareBoundaries" type="checkbox" /> <span data-i18n="compare">对照上一快照</span></label></div>
             <div id="boundaryKey" class="boundary-key"></div>
-            <div class="annotation-tools"><label><input id="showPolityNames" type="checkbox" checked /> 政权名称</label><label><input id="showMapEvents" type="checkbox" checked /> <i class="event-swatch"></i>历史事件</label><label><input id="showMapPeople" type="checkbox" checked /> <i class="person-swatch"></i>历史人物</label><span>事件：前后 50 年 · 人物：生平 / 任期</span></div>
-            <div class="map-search"><label for="boundarySearch">筛选政权</label><input id="boundarySearch" type="search" placeholder="政权名称 / Roman / Egypt" autocomplete="off" /><output id="boundaryCount"></output></div>
+            <div class="annotation-tools"><label><input id="showPolityNames" type="checkbox" checked /> <span data-i18n="polityNames">政权名称</span></label><label><input id="showMapEvents" type="checkbox" checked /> <i class="event-swatch"></i><span data-i18n="mapEvents">历史事件</span></label><label><input id="showMapPeople" type="checkbox" checked /> <i class="person-swatch"></i><span data-i18n="mapPeople">历史人物</span></label><span data-i18n="annotationNote">事件：前后 50 年 · 人物：生平 / 任期</span></div>
+            <div class="map-search"><label for="boundarySearch" data-i18n="filter">筛选政权</label><input id="boundarySearch" type="search" placeholder="政权名称 / Roman / Egypt" data-i18n-placeholder="searchPlaceholder" autocomplete="off" /><output id="boundaryCount"></output></div>
             <div class="boundary-meta"><p id="boundarySelection"></p><p>边界来自 <a href="https://github.com/aourednik/historical-basemaps" target="_blank" rel="noopener noreferrer">Historical Basemaps</a>（GPL-3.0）；古代边界与文化区域存在不确定性。所选年使用此前最近快照，非逐年精确疆界。</p></div>
           </div>
           <aside class="detail-card">
@@ -122,18 +122,19 @@
         </section>
 
         <section class="content-section">
-          <div class="section-title-row"><div><p class="section-label">政权档案 / POLITIES</p><h2>沿岸政权与王朝</h2></div><p class="section-hint">部分地区有多个政权并立</p></div>
+          <div class="section-title-row"><div><p class="section-label" data-i18n="politySection">政权档案 / POLITIES</p><h2 data-i18n="polityTitle">沿岸政权与王朝</h2></div><p class="section-hint" data-i18n="regionHint">部分地区有多个政权并立</p></div>
           <div class="polity-grid" id="polityGrid"></div>
         </section>
 
         <section class="content-section events-section">
-          <div class="section-title-row"><div><p class="section-label">关键节点 / EVENTS</p><h2>重要历史事件</h2></div><p class="section-hint">所选年前后 50 年</p></div>
+          <div class="section-title-row"><div><p class="section-label" data-i18n="eventSection">关键节点 / EVENTS</p><h2 data-i18n="eventTitle">重要历史事件</h2></div><p class="section-hint" data-i18n="eventHint">所选年前后 50 年</p></div>
           <div class="events-list" id="eventsList"></div>
         </section>
       </main>
       <footer><span>地中海国家演变 · 本地研究工作台</span><span>初始资料非完整通史；年度交接与边界为概览，待史料复核。</span></footer>
     </div>
     <script src="history.js"></script>
+    <script src="i18n.js"></script>
     <script src="land.js"></script>
     <script src="boundaries.js"></script>
     <script src="labels-zh.js"></script>
@@ -142,5 +143,6 @@
     <script src="annotations.js"></script>
     <script src="app.js"></script>
     <script src="map.js"></script>
+    <script src="i18n-ui.js"></script>
   </body>
 </html>

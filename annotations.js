@@ -4,7 +4,7 @@
   const project = ([lon, lat]) => [(lon + 12) / 52 * 760, (49 - lat) / 22 * 430];
   const yearIndex = (year) => year < 0 ? year + 1 : year;
   const format = (year) => year < 0 ? `公元前 ${-year} 年` : `公元 ${year} 年`;
-  const chinese = (name) => window.ATLAS_LABELS_ZH[name] || "名称待考";
+  const chinese = (name) => window.AtlasLanguage === "en" ? name : (window.ATLAS_LABELS_ZH[name] || "名称待考");
   let transform = {x:0, y:0, k:1};
   let records = [];
   let currentYear;
@@ -12,6 +12,7 @@
   let selectedKey = "";
   let query = "";
   let labelSnapshot;
+  let labelLanguage;
   let polityRecords = [];
   const reference = (source) => {
     const link = document.createElement("a");
@@ -28,8 +29,9 @@
     return node;
   };
   function labels(stage) {
-    if (labelSnapshot === stage.year) return polityRecords;
+    if (labelSnapshot === stage.year && labelLanguage === window.AtlasLanguage) return polityRecords;
     labelSnapshot = stage.year;
+    labelLanguage = window.AtlasLanguage;
     const subjects = new Map();
     for (const feature of stage.features) {
       const subject = feature.properties.SUBJECTO || feature.properties.NAME;
@@ -77,7 +79,7 @@
       if (location) group("person",{title,description,start,end,source},location);
     }
     for (const group of grouped.values()) {
-      group.label = group.items.map((item)=>item.title).join("\n");
+      group.label = group.items.map((item)=>window.AtlasLanguage === "en" ? (window.ATLAS_I18N.eventTitles[item.title] || item.title) : item.title).join("\n");
       records.push(group);
     }
     $("mapAnnotations").replaceChildren();
@@ -104,7 +106,7 @@
       [...$("boundaryKey").children].find((item)=>item.dataset.subject===record.subject)?.click();
     }
     $("annotationSummary").hidden=false;
-    $("annotationTitle").textContent = record.kind === "event" ? "历史事件" : record.kind === "person" ? "历史人物" : "地图政权";
+    $("annotationTitle").textContent = record.kind === "event" ? (window.AtlasLanguage === "en" ? "Historical event" : "历史事件") : record.kind === "person" ? (window.AtlasLanguage === "en" ? "Historical person" : "历史人物") : (window.AtlasLanguage === "en" ? "Mapped polity" : "地图政权");
     const body=$("annotationBody");
     body.replaceChildren();
     if (record.kind==="polity") {
@@ -113,7 +115,7 @@
       addText(body,"p",`原数据名称：${record.sourceName}`);
     } else {
       for (const item of record.items) {
-        addText(body,"strong",item.title);
+        addText(body,"strong",window.AtlasLanguage === "en" ? (window.ATLAS_I18N.eventTitles[item.title] || item.title) : item.title);
         addText(body,"p",record.kind==="event" ? `事件年份：${format(item.date)}` : `生平 / 任期：${format(item.start)} — ${format(item.end)}`);
         addText(body,"p",item.description);
         addText(body,"p",`${item.place} · ${item.precision || item.relation}`);
