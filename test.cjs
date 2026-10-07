@@ -136,7 +136,7 @@ async function browserTests() {
     offline.on("request",(request)=>requests.push(request.url()));
     await offline.goto("file:///" + path.join(__dirname,"index.html").replaceAll("\\","/"));
     assert.equal(await offline.locator(".polity-card").count(),7);
-    assert(requests.every((url)=>url.startsWith("file:")),"Offline build must not request network resources");
+    assert(requests.every((url)=>url.startsWith("file:") || url.startsWith("data:")),"Offline build must not request network resources");
     console.log("Browser checks passed: year changes, dynasty/ruler filtering, selection, BCE/CE transition, events, playback, horizontal scroll, reset, desktop/mobile layout and offline file opening.");
   } finally { await browser.close(); }
 }
